@@ -14,8 +14,9 @@ The Apps Script is designed for the midlandsrx-data spreadsheet and these exact 
 5. Choose Deploy, New deployment, Web app.
 6. Set Execute as to yourself and choose the audience allowed to access the web app.
 7. Copy the deployed URL ending in /exec.
-8. Paste that URL into assets/js/config.js as MIDLANDSRX_DATA_API.
-9. Deploy the website.
+8. Open that URL with ?action=health and confirm spreadsheetId is 11neN9xtz5D22Iec9eDidDlL7ouBmswxFPaOHngLoPV8.
+9. Paste the deployment ID or /exec URL into assets/js/config.js.
+10. Deploy the website.
 
 ## Data flow
 

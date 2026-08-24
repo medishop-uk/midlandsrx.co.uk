@@ -3,6 +3,7 @@
 var whatsapp='https://wa.me/447438135064';
 var telegram='https://t.me/BenzoAddy';
 var DATA_API_URL=window.MIDLANDSRX_DATA_API||'';
+var DATA_SPREADSHEET_ID=window.MIDLANDSRX_DATA_SPREADSHEET_ID||'';
 var pricing={
  clonazepam:[['Pase 2 / Rnaze 2mg / Revotril 2mg',[[10,20],[15,25],[30,45],[60,70],[100,100],[300,240],[500,350],[1000,595]]]],
  alprazolam:[['Alprax 2mg / Kasol 1mg / Rlam 1mg',[[10,20],[30,45],[60,70],[100,100],[300,210],[500,300],[1000,500]]],['Alprax 1mg / Alpraem 1mg',[[10,20],[30,45],[60,60],[100,85],[300,210],[500,310],[1000,495]]]],
@@ -63,12 +64,12 @@ function newOrder(channel){
 }
 async function checkout(channel){
  var status=document.querySelector('[data-checkout-status]');if(!cart.length)return;
- if(!DATA_API_URL){var fallback=newOrder(channel);location.href=channel==='whatsapp'?whatsapp+'?text='+encodeURIComponent(orderMessage(fallback,channel)):telegram;return}
+ if(!DATA_API_URL){status.textContent='Checkout storage is not configured. Your request has not been sent.';return}
  var order=newOrder(channel);status.textContent='Saving your request securely…';document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=true});
  try{
   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},12000);
   var response=await fetch(DATA_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'createOrder',order:order,userAgent:navigator.userAgent}),signal:controller.signal});clearTimeout(timer);
-  var result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'Could not save request');
+  var result=await response.json();if(!response.ok||!result.ok||(result.spreadsheetId&&DATA_SPREADSHEET_ID&&result.spreadsheetId!==DATA_SPREADSHEET_ID))throw new Error(result.error||'Could not save request');
   localStorage.removeItem('midlandsCart');cart=[];if(typeof window.gtag==='function')window.gtag('event','purchase',{transaction_id:order.orderId,currency:'GBP',value:order.total,shipping:order.postage,items:order.items.map(function(item){return {item_id:item.slug||item.key,item_name:item.name,item_variant:item.type,price:item.price,quantity:item.quantity}})});
   var target=channel==='whatsapp'?whatsapp+'?text='+encodeURIComponent(orderMessage(order,channel)):telegram;location.href=target
  }catch(error){status.textContent='We could not save your request. Please try again.';document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=false})}
