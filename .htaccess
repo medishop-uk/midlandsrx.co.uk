@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Legacy ampersand category slugs redirect to portable SEO-safe filenames.
+RewriteRule ^shop/category/adhd-(?:&|%26)-wakefulness(?:\.html)?$ shop/category/adhd-and-wakefulness.html [R=301,L,NE]
+RewriteRule ^shop/category/sleep-(?:&|%26)-insomnia-medication(?:\.html)?$ shop/category/sleep-and-insomnia-medication.html [R=301,L,NE]
+RewriteRule ^shop/category/nerve-pain-(?:&|%26)-anxiety-related-medicines(?:\.html)?$ shop/category/nerve-pain-and-anxiety-related-medicines.html [R=301,L,NE]
