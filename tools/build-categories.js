@@ -1,9 +1,21 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const sourceDir = path.join(root, 'shop', 'category');
-const productImage = '../../assets/img/medicine-product.svg';
+const productImages = {
+  'alprax-alprazolam-2-mg-mlx.html':'../../assets/img/medicine/alprax-xr2.jpg',
+  'alprazolam-alprax-1-mg-mlx.html':'../../assets/img/medicine/alprax-xr2.jpg',
+  'bromazepam-version-2.html':'../../assets/img/medicine/broze.jpg',
+  'diazepam-martin-dow-10mg-mlx.html':'../../assets/img/medicine/valium.jpg',
+  'easium-diazepam-10mg-mlx.html':'../../assets/img/medicine/valium.jpg',
+  'lorazepam-ativan-2-mg.html':'../../assets/img/medicine/lorazepam.jpg',
+  'noctin-nitrazepam-5-mg-mlx.html':'../../assets/img/medicine/noctin.jpg',
+  'rivotril-clonazepam-2mg-mlx.html':'../../assets/img/medicine/rivotril-2.jpg',
+  'sedil-diazepam-5-mg-mlx.html':'../../assets/img/medicine/sedil.jpg',
+  'zopiclone-7-5mg-version-2.html':'../../assets/img/medicine/zopiclone-tablets.jpg'
+};
+const fallbackProductImage = '../../assets/img/medicine-product.svg';
 
 const categories = [
   {
@@ -141,13 +153,14 @@ function cards(category) {
   return category.products.map(slug => {
     const item = products[slug];
     if (!item) throw new Error(`Unknown product ${slug}`);
-    return `<article class="category-product-card"><a class="category-product-image" href="../medicine/${slug}" aria-label="View ${item[0]}"><img src="${productImage}" alt="${item[0]}"></a><div class="category-product-body"><p class="category-product-label">${item[1]}</p><h2><a href="../medicine/${slug}">${item[0]}</a></h2><p>Review medicine information, available pack options and important safety guidance.</p><div class="category-product-footer"><span><small>Prices from</small><strong>£${item[2]}</strong></span><a class="page-cta" href="../medicine/${slug}">View medicine</a></div></div></article>`;
+    const productImage = productImages[slug] || fallbackProductImage;
+    return `<article class="category-product-card"><a class="category-product-image" href="../medicine/${slug}" aria-label="View ${item[0]}"><img src="${productImage}" alt="${item[0]}" loading="lazy" width="555" height="555"></a><div class="category-product-body"><p class="category-product-label">${item[1]}</p><h2><a href="../medicine/${slug}">${item[0]}</a></h2><p>Review medicine information, available pack options and important safety guidance.</p><div class="category-product-footer"><span><small>Prices from</small><strong>Â£${item[2]}</strong></span><a class="page-cta" href="../medicine/${slug}">View medicine</a></div></div></article>`;
   }).join('');
 }
 
 function navDropdown(prefix, active) {
   const links = categories.map(item => `<a${item.slug === active ? ' class="active"' : ''} href="${prefix}shop/category/${item.slug}.html">${item.name}</a>`).join('');
-  return `<details class="nav-categories"><summary>All Categories <span aria-hidden="true">⌄</span></summary><div class="nav-category-menu">${links}</div></details>`;
+  return `<details class="nav-categories"><summary>All Categories <span aria-hidden="true">âŒ„</span></summary><div class="nav-category-menu">${links}</div></details>`;
 }
 
 function page(category) {
@@ -178,12 +191,13 @@ function page(category) {
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ77TJFH" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <a class="page-skip" href="#page-content">Skip to content</a><div class="page-notice"><div class="page-container"><p>Private UK-wide delivery</p><p><a href="../../#how-it-works">How requests work</a></p></div></div>
 <header class="page-header"><div class="page-container page-header-inner"><a class="page-brand" href="../../"><img src="../../assets/img/logo.svg" alt="MidlandsRx"></a><nav class="page-nav">${navDropdown('../../', category.slug)}<a class="active" href="../">Shop</a><a href="../../blog/">Blog</a><a href="../../about-us/">About Us</a><a href="../../#contact">Contact Us</a></nav><div class="page-actions"><button class="page-menu" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button></div></div><nav class="page-mobile-nav"><a href="../../#categories">All Categories</a><a href="../">Shop</a><a href="../../blog/">Blog</a><a href="../../about-us/">About Us</a><a href="../../#contact">Contact Us</a></nav></header>
-<main id="page-content"><section class="category-hero"><div class="page-container"><nav class="category-breadcrumb" aria-label="Breadcrumb"><a href="../../">Home</a><span>›</span><a href="../">Shop</a><span>›</span><span>${category.name}</span></nav><p class="page-kicker">MEDICINE CATEGORY</p><h1>${escapeHtml(parts.h1 || category.h1)}</h1><p>${escapeHtml(parts.lead)}</p></div></section>
+<main id="page-content"><section class="category-hero"><div class="page-container"><nav class="category-breadcrumb" aria-label="Breadcrumb"><a href="../../">Home</a><span>â€º</span><a href="../">Shop</a><span>â€º</span><span>${category.name}</span></nav><p class="page-kicker">MEDICINE CATEGORY</p><h1>${escapeHtml(parts.h1 || category.h1)}</h1><p>${escapeHtml(parts.lead)}</p></div></section>
 <section class="category-catalogue"><div class="page-container category-layout"><aside class="category-sidebar"><label for="category-select">Browse categories</label><select id="category-select">${options}</select><nav aria-label="Medicine categories">${categoryLinks(category.slug)}</nav></aside><div class="category-results"><div class="category-results-head"><div><p class="page-kicker">RELEVANT MEDICINES</p><h2>${category.name}</h2></div><span>${category.products.length} option${category.products.length === 1 ? '' : 's'}</span></div><div class="category-product-grid">${cards(category)}</div></div></div></section>
 <section class="category-reading"><article class="page-container article-content">${parts.content}</article></section></main>
-<footer class="page-footer"><div class="page-container footer-grid"><div class="footer-brand"><img src="../../assets/img/logo.svg" alt="MidlandsRx"><p>Private, convenient access to healthcare support across the United Kingdom.</p></div><div><h2>EXPLORE</h2><a href="../">Medicines</a><a href="../../blog/">Blog</a><a href="../../about-us/">About Us</a></div><div><h2>SUPPORT</h2><a href="../../#contact">Contact Us</a><a href="https://wa.me/447438135064">WhatsApp</a><a href="https://t.me/BenzoAddy">Telegram</a></div><div><h2>IMPORTANT</h2><p class="footer-note">Always read the patient information leaflet and follow professional medical advice.</p></div></div><div class="page-container footer-bottom"><span>© ${new Date().getFullYear()} MidlandsRx. All rights reserved.</span><span>Keep medicines out of reach of children.</span></div></footer>
+<footer class="page-footer"><div class="page-container footer-grid"><div class="footer-brand"><img src="../../assets/img/logo.svg" alt="MidlandsRx"><p>Private, convenient access to healthcare support across the United Kingdom.</p></div><div><h2>EXPLORE</h2><a href="../">Medicines</a><a href="../../blog/">Blog</a><a href="../../about-us/">About Us</a></div><div><h2>SUPPORT</h2><a href="../../#contact">Contact Us</a><a href="https://wa.me/447438135064">WhatsApp</a><a href="https://t.me/BenzoAddy">Telegram</a></div><div><h2>IMPORTANT</h2><p class="footer-note">Always read the patient information leaflet and follow professional medical advice.</p></div></div><div class="page-container footer-bottom"><span>Â© ${new Date().getFullYear()} MidlandsRx. All rights reserved.</span><span>Keep medicines out of reach of children.</span></div></footer>
 </body></html>`;
 }
 
 for (const category of categories) fs.writeFileSync(path.join(sourceDir, `${category.slug}.html`), page(category), 'utf8');
 console.log(`Built ${categories.length} consistent category pages.`);
+
