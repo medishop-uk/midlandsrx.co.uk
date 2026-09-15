@@ -3,13 +3,13 @@ const path=require('path');
 const root=path.resolve(__dirname,'..');
 
 const productImages={
- 'alprax-alprazolam-2-mg-mlx.html':'medicine/alprax-xr2.jpg','alprazolam-alprax-1-mg-mlx.html':'medicine/alprax-xr2.jpg',
- 'bromazepam-version-2.html':'medicine/broze.jpg','diazepam-martin-dow-10mg-mlx.html':'medicine/valium.jpg',
- 'easium-diazepam-10mg-mlx.html':'medicine/valium.jpg','lorazepam-ativan-2-mg.html':'medicine/lorazepam.jpg',
- 'noctin-nitrazepam-5-mg-mlx.html':'medicine/noctin.jpg','rivotril-clonazepam-2mg-mlx.html':'medicine/rivotril-2.jpg',
- 'sedil-diazepam-5-mg-mlx.html':'medicine/sedil.jpg','zopiclone-7-5mg-version-2.html':'medicine/zopiclone-tablets.jpg'
+ 'alprax-alprazolam-2-mg-mlx.html':'medicine-product.svg','alprazolam-alprax-1-mg-mlx.html':'medicine-product.svg',
+ 'bromazepam-version-2.html':'medicine-product.svg','diazepam-martin-dow-10mg-mlx.html':'medicine-product.svg',
+ 'easium-diazepam-10mg-mlx.html':'medicine-product.svg','lorazepam-ativan-2-mg.html':'medicine-product.svg',
+ 'noctin-nitrazepam-5-mg-mlx.html':'medicine-product.svg','rivotril-clonazepam-2mg-mlx.html':'medicine-product.svg',
+ 'sedil-diazepam-5-mg-mlx.html':'medicine-product.svg','zopiclone-7-5mg-version-2.html':'medicine-product.svg'
 };
-const homeProductImages={clonazepam:'medicine/rivotril-2.jpg',alprazolam:'medicine/alprax-xr2.jpg',diazepam:'medicine/valium.jpg',lorazepam:'medicine/lorazepam.jpg',nitrazepam:'medicine/noctin.jpg',zopiclone:'medicine/zopiclone-tablets.jpg',bromazepam:'medicine/broze.jpg'};
+const homeProductImages={clonazepam:'medicine-product.svg',alprazolam:'medicine-product.svg',diazepam:'medicine-product.svg',lorazepam:'medicine-product.svg',nitrazepam:'medicine-product.svg',zopiclone:'medicine-product.svg',bromazepam:'medicine-product.svg'};
 const blogImages={
  '10-signs-of-adhd-in-adults.html':'blog/post/midlandsrx-adhd-diagnosis-hero-image.webp',
  '10-reasons-of-sleep-disorder-and-how-to-treat-them.html':'blog/post/sleeping-pills-hero-image.webp',

@@ -4,16 +4,16 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const sourceDir = path.join(root, 'shop', 'category');
 const productImages = {
-  'alprax-alprazolam-2-mg-mlx.html':'../../assets/img/medicine/alprax-xr2.jpg',
-  'alprazolam-alprax-1-mg-mlx.html':'../../assets/img/medicine/alprax-xr2.jpg',
-  'bromazepam-version-2.html':'../../assets/img/medicine/broze.jpg',
-  'diazepam-martin-dow-10mg-mlx.html':'../../assets/img/medicine/valium.jpg',
-  'easium-diazepam-10mg-mlx.html':'../../assets/img/medicine/valium.jpg',
-  'lorazepam-ativan-2-mg.html':'../../assets/img/medicine/lorazepam.jpg',
-  'noctin-nitrazepam-5-mg-mlx.html':'../../assets/img/medicine/noctin.jpg',
-  'rivotril-clonazepam-2mg-mlx.html':'../../assets/img/medicine/rivotril-2.jpg',
-  'sedil-diazepam-5-mg-mlx.html':'../../assets/img/medicine/sedil.jpg',
-  'zopiclone-7-5mg-version-2.html':'../../assets/img/medicine/zopiclone-tablets.jpg'
+  'alprax-alprazolam-2-mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'alprazolam-alprax-1-mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'bromazepam-version-2.html':'../../assets/img/medicine-product.svg',
+  'diazepam-martin-dow-10mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'easium-diazepam-10mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'lorazepam-ativan-2-mg.html':'../../assets/img/medicine-product.svg',
+  'noctin-nitrazepam-5-mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'rivotril-clonazepam-2mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'sedil-diazepam-5-mg-mlx.html':'../../assets/img/medicine-product.svg',
+  'zopiclone-7-5mg-version-2.html':'../../assets/img/medicine-product.svg'
 };
 const fallbackProductImage = '../../assets/img/medicine-product.svg';
 

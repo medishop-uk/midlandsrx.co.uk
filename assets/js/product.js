@@ -50,11 +50,11 @@ Object.assign(catalog,{
 });function text(value){return String(value||'').replace(/\s+/g,' ').trim()}
 function slug(){return location.pathname.split('/').filter(Boolean).pop().replace(/\.html$/,'')}
 var productImages={
-'alprax-alprazolam-2-mg-mlx':'medicine/alprax-xr2.jpg','alprazolam-alprax-1-mg-mlx':'medicine/alprax-xr2.jpg',
-'bromazepam-version-2':'medicine/broze.jpg','diazepam-martin-dow-10mg-mlx':'medicine/valium.jpg',
-'easium-diazepam-10mg-mlx':'medicine/valium.jpg','lorazepam-ativan-2-mg':'medicine/lorazepam.jpg',
-'noctin-nitrazepam-5-mg-mlx':'medicine/noctin.jpg','rivotril-clonazepam-2mg-mlx':'medicine/rivotril-2.jpg',
-'sedil-diazepam-5-mg-mlx':'medicine/sedil.jpg','zopiclone-7-5mg-version-2':'medicine/zopiclone-tablets.jpg'
+'alprax-alprazolam-2-mg-mlx':'medicine-product.svg','alprazolam-alprax-1-mg-mlx':'medicine-product.svg',
+'bromazepam-version-2':'medicine-product.svg','diazepam-martin-dow-10mg-mlx':'medicine-product.svg',
+'easium-diazepam-10mg-mlx':'medicine-product.svg','lorazepam-ativan-2-mg':'medicine-product.svg',
+'noctin-nitrazepam-5-mg-mlx':'medicine-product.svg','rivotril-clonazepam-2mg-mlx':'medicine-product.svg',
+'sedil-diazepam-5-mg-mlx':'medicine-product.svg','zopiclone-7-5mg-version-2':'medicine-product.svg'
 };
 function field(label,scope){var nodes=scope.querySelectorAll('li,p');for(var i=0;i<nodes.length;i++){var value=text(nodes[i].textContent);if(value.toLowerCase().indexOf(label.toLowerCase()+':')===0)return text(value.slice(value.indexOf(':')+1))}return ''}
 function stars(value){var html='<span class="review-stars" aria-label="'+value+' out of 5 stars">';for(var i=1;i<=5;i++)html+='<span class="'+(i<=value?'filled':'')+'">★</span>';return html+'</span>'}

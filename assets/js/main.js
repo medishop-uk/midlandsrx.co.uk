@@ -25,7 +25,7 @@ const medicinePages={
  diazepam:'diazepam-martin-dow-10mg-mlx.html',lorazepam:'lorazepam-ativan-2-mg.html',nitrazepam:'noctin-nitrazepam-5-mg-mlx.html',
  zopiclone:'zopiclone-7-5mg-version-2.html',pregabalin:'pregabalin-pregacare-nt-m.html',modifinal:'modafinil-version-2.html',bromazepam:'bromazepam-version-2.html'
 };
-const homeProductImages={"clonazepam":"medicine/rivotril-2.jpg","alprazolam":"medicine/alprax-xr2.jpg","diazepam":"medicine/valium.jpg","lorazepam":"medicine/lorazepam.jpg","nitrazepam":"medicine/noctin.jpg","zopiclone":"medicine/zopiclone-tablets.jpg","bromazepam":"medicine/broze.jpg"};
+const homeProductImages={"clonazepam":"medicine-product.svg","alprazolam":"medicine-product.svg","diazepam":"medicine-product.svg","lorazepam":"medicine-product.svg","nitrazepam":"medicine-product.svg","zopiclone":"medicine-product.svg","bromazepam":"medicine-product.svg"};
 const listedMedicines=medicines.filter(m=>medicinePages[m.id]);
 const categoryAssignments={"clonazepam":[1],"alprazolam":[0],"midazolam":[3],"diazepam":[0,1,3],"lorazepam":[0,3],"tapentadol":[5],"tramadol":[5],"nitrazepam":[2],"zopiclone":[2],"pregabalin":[4],"ritalin":[6],"etizolam":[0,3],"modifinal":[6],"cocodamol":[5],"bromazepam":[0,3],"benzit":[1],"clobazam":[1],"mirtazapine":[2],"temazepam":[2],"zolpidem":[2]};medicines.forEach(m=>m.c=categoryAssignments[m.id]||[]);
 let active='all',query='',product=null,variant=0,pack=0;let cart=JSON.parse(localStorage.getItem('midlandsCart')||'[]');

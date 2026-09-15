@@ -91,7 +91,7 @@ function init(){
  var actions=document.querySelector('.page-actions');
  if(actions&&!document.querySelector('[data-commerce-open]')){var basket=document.createElement('button');basket.type='button';basket.className='commerce-basket';basket.setAttribute('data-commerce-open','');basket.innerHTML='Basket <b data-commerce-count>0</b>';actions.insertBefore(basket,actions.firstChild)}
  if(!document.querySelector('.commerce-drawer'))document.body.insertAdjacentHTML('beforeend','<div class="commerce-overlay"></div><aside class="commerce-drawer" aria-label="Medicine basket"><div class="commerce-head"><div><p>YOUR REQUEST</p><h2>Medicine basket</h2></div><button type="button" data-commerce-close aria-label="Close basket">×</button></div><div class="commerce-items" data-commerce-items></div><div class="commerce-footer" data-commerce-footer></div></aside>');
- document.querySelector('[data-commerce-open]').addEventListener('click',openCart);document.querySelector('[data-commerce-close]').addEventListener('click',closeCart);document.querySelector('.commerce-overlay').addEventListener('click',closeCart);
+ document.addEventListener('click',function(event){if(event.target.closest('[data-commerce-open]'))openCart();});document.querySelector('[data-commerce-close]').addEventListener('click',closeCart);document.querySelector('.commerce-overlay').addEventListener('click',closeCart);
  renderCart();updateCount();
  var summary=document.querySelector('.product-summary');if(!summary)return;
  document.querySelectorAll('.product-price,.product-request-row,.telegram-product-link').forEach(function(node){node.remove()});
