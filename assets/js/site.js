@@ -10,7 +10,31 @@ var dataApi=window.MIDLANDSRX_DATA_API||'',dataSpreadsheetId=window.MIDLANDSRX_D
 function homeMoney(value){return '£'+Number(value).toFixed(0)}
 function homeOrderMessage(order){return 'Hello MidlandsRx, my request reference is '+order.orderId+'.\n\n'+order.items.map(function(item){return '• '+item.name+' — '+item.type+', '+item.pieces+' pcs × '+item.quantity+' ('+homeMoney(item.price*item.quantity)+')'}).join('\n')+'\n\nMedicine total: '+homeMoney(order.subtotal)+'\nPostage: '+homeMoney(order.postage)+'\nTotal: '+homeMoney(order.total)+'\n\nPlease confirm availability and next steps.'}
 function enhanceHomeCart(){var footer=document.querySelector('#cart-footer'),buttons=footer&&footer.querySelector('.checkout-buttons');if(!buttons||footer.querySelector('#home-postage'))return;var label=document.createElement('label');label.className='home-postage-select';label.innerHTML='Postage<select id="home-postage"><option value="12">Regular — £12</option><option value="15">Saturday Special — from £15</option></select>';buttons.parentNode.insertBefore(label,buttons)}
-async function saveHomeCheckout(event,link){event.preventDefault();var status=document.querySelector('#home-checkout-status');if(!status){status=document.createElement('p');status.id='home-checkout-status';status.className='postage-note';link.closest('.checkout-buttons').after(status)}if(!dataApi){status.textContent='Checkout storage is not configured. Your request has not been sent.';return}var items=[];try{items=JSON.parse(localStorage.getItem('midlandsCart')||'[]')}catch(error){}if(!items.length)return;var channel=link.href.indexOf('wa.me/')>-1?'whatsapp':'telegram',postage=Number((document.querySelector('#home-postage')||{value:12}).value),subtotal=items.reduce(function(sum,item){return sum+Number(item.price)*Number(item.quantity||1)},0),order={orderId:'MRX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(),timestamp:new Date().toISOString(),channel:channel,status:'New',items:items,subtotal:subtotal,postage:postage,total:subtotal+postage,currency:'GBP',pageUrl:location.href,utmSource:new URLSearchParams(location.search).get('utm_source')||'',utmMedium:new URLSearchParams(location.search).get('utm_medium')||'',utmCampaign:new URLSearchParams(location.search).get('utm_campaign')||''};status.textContent='Saving your request securely…';try{var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},12000),response=await fetch(dataApi,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'createOrder',order:order,userAgent:navigator.userAgent}),signal:controller.signal});clearTimeout(timer);var result=await response.json();if(!response.ok||!result.ok||(result.spreadsheetId&&dataSpreadsheetId&&result.spreadsheetId!==dataSpreadsheetId))throw new Error();localStorage.removeItem('midlandsCart');if(typeof window.gtag==='function')window.gtag('event','purchase',{transaction_id:order.orderId,currency:'GBP',value:order.total,shipping:order.postage});location.href=channel==='whatsapp'?'https://wa.me/447438135064?text='+encodeURIComponent(homeOrderMessage(order)):'https://t.me/BenzoAddy'}catch(error){status.textContent='We could not save your request. Please try again.'}}
+async function saveOrderBestEffort(url,spreadsheetId,order){
+ if(!url)return false;
+ var controller=new AbortController(),timer;
+ try{return await Promise.race([
+  (async function(){var response=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'createOrder',order:order,userAgent:navigator.userAgent}),signal:controller.signal});var result=await response.json();return !!(response.ok&&result&&result.ok&&(!result.spreadsheetId||!spreadsheetId||result.spreadsheetId===spreadsheetId));})(),
+  new Promise(function(resolve){timer=setTimeout(function(){resolve(false);controller.abort();},5000);})
+ ]);}catch(error){return false;}finally{clearTimeout(timer);}
+}
+var homeCheckoutPending=false;
+async function saveHomeCheckout(event,link){
+ event.preventDefault();if(homeCheckoutPending)return;
+ var status=document.querySelector('#home-checkout-status');if(!status){status=document.createElement('p');status.id='home-checkout-status';status.className='postage-note';link.closest('.checkout-buttons').after(status);}
+ var items=[];try{items=JSON.parse(localStorage.getItem('midlandsCart')||'[]')}catch(error){}if(!items.length)return;var channel=link.href.indexOf('wa.me/')>-1?'whatsapp':'telegram',postage=Number((document.querySelector('#home-postage')||{value:12}).value),subtotal=items.reduce(function(sum,item){return sum+Number(item.price)*Number(item.quantity||1)},0),order={orderId:'MRX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(),timestamp:new Date().toISOString(),channel:channel,status:'New',items:items,subtotal:subtotal,postage:postage,total:subtotal+postage,currency:'GBP',pageUrl:location.href,utmSource:new URLSearchParams(location.search).get('utm_source')||'',utmMedium:new URLSearchParams(location.search).get('utm_medium')||'',utmCampaign:new URLSearchParams(location.search).get('utm_campaign')||''};
+ homeCheckoutPending=true;
+ var target=channel==='whatsapp'?'https://wa.me/447438135064?text='+encodeURIComponent(homeOrderMessage(order)):'https://t.me/BenzoAddy';
+ status.textContent='Opening '+(channel==='whatsapp'?'WhatsApp':'Telegram')+'?';
+ try{
+  var saved=await saveOrderBestEffort(dataApi,dataSpreadsheetId,order);
+  if(saved){
+   try{localStorage.removeItem('midlandsCart');}catch(error){}
+   try{if(typeof window.gtag==='function')window.gtag('event','purchase',{transaction_id:order.orderId,currency:'GBP',value:order.total,shipping:order.postage});}catch(error){}
+  }
+ }finally{location.href=target;homeCheckoutPending=false;}
+}
+
 enhanceHomeCart();var cartFooter=document.querySelector('#cart-footer');if(cartFooter)new MutationObserver(enhanceHomeCart).observe(cartFooter,{childList:true,subtree:true});
 document.addEventListener('click',function(event){var link=event.target.closest('.checkout-buttons a');if(link)saveHomeCheckout(event,link)});
 })();(function () {

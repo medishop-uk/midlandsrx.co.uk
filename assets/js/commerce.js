@@ -62,18 +62,31 @@ function newOrder(channel){
  var postageSelect=document.querySelector('#commerce-postage'),postage=Number(postageSelect?postageSelect.value:12),subtotal=cart.reduce(function(sum,item){return sum+Number(item.price)*Number(item.quantity||1)},0);
  return {orderId:'MRX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase(),timestamp:new Date().toISOString(),channel:channel,status:'New',items:cart,subtotal:subtotal,postage:postage,total:subtotal+postage,currency:'GBP',pageUrl:location.href,utmSource:new URLSearchParams(location.search).get('utm_source')||'',utmMedium:new URLSearchParams(location.search).get('utm_medium')||'',utmCampaign:new URLSearchParams(location.search).get('utm_campaign')||''}
 }
-async function checkout(channel){
- var status=document.querySelector('[data-checkout-status]');if(!cart.length)return;
- if(!DATA_API_URL){status.textContent='Checkout storage is not configured. Your request has not been sent.';return}
- var order=newOrder(channel);status.textContent='Saving your request securely…';document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=true});
- try{
-  var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},12000);
-  var response=await fetch(DATA_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'createOrder',order:order,userAgent:navigator.userAgent}),signal:controller.signal});clearTimeout(timer);
-  var result=await response.json();if(!response.ok||!result.ok||(result.spreadsheetId&&DATA_SPREADSHEET_ID&&result.spreadsheetId!==DATA_SPREADSHEET_ID))throw new Error(result.error||'Could not save request');
-  localStorage.removeItem('midlandsCart');cart=[];if(typeof window.gtag==='function')window.gtag('event','purchase',{transaction_id:order.orderId,currency:'GBP',value:order.total,shipping:order.postage,items:order.items.map(function(item){return {item_id:item.slug||item.key,item_name:item.name,item_variant:item.type,price:item.price,quantity:item.quantity}})});
-  var target=channel==='whatsapp'?whatsapp+'?text='+encodeURIComponent(orderMessage(order,channel)):telegram;location.href=target
- }catch(error){status.textContent='We could not save your request. Please try again.';document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=false})}
+async function saveOrderBestEffort(url,spreadsheetId,order){
+ if(!url)return false;
+ var controller=new AbortController(),timer;
+ try{return await Promise.race([
+  (async function(){var response=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'createOrder',order:order,userAgent:navigator.userAgent}),signal:controller.signal});var result=await response.json();return !!(response.ok&&result&&result.ok&&(!result.spreadsheetId||!spreadsheetId||result.spreadsheetId===spreadsheetId));})(),
+  new Promise(function(resolve){timer=setTimeout(function(){resolve(false);controller.abort();},5000);})
+ ]);}catch(error){return false;}finally{clearTimeout(timer);}
 }
+var checkoutPending=false;
+async function checkout(channel){
+ if(checkoutPending||!cart.length)return;
+ checkoutPending=true;
+ var status=document.querySelector('[data-checkout-status]'),order=newOrder(channel);
+ var target=channel==='whatsapp'?whatsapp+'?text='+encodeURIComponent(orderMessage(order,channel)):telegram;
+ status.textContent='Opening '+(channel==='whatsapp'?'WhatsApp':'Telegram')+'?';
+ document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=true});
+ try{
+  var saved=await saveOrderBestEffort(DATA_API_URL,DATA_SPREADSHEET_ID,order);
+  if(saved){
+   try{localStorage.removeItem('midlandsCart');cart=[];}catch(error){}
+   try{if(typeof window.gtag==='function')window.gtag('event','purchase',{transaction_id:order.orderId,currency:'GBP',value:order.total,shipping:order.postage,items:order.items.map(function(item){return {item_id:item.slug||item.key,item_name:item.name,item_variant:item.type,price:item.price,quantity:item.quantity}})});}catch(error){}
+  }
+ }finally{location.href=target;checkoutPending=false;document.querySelectorAll('[data-checkout]').forEach(function(button){button.disabled=false});}
+}
+
 function renderCart(){
  var items=document.querySelector('[data-commerce-items]'),footer=document.querySelector('[data-commerce-footer]');if(!items||!footer)return;
  if(!cart.length){items.innerHTML='<div class="commerce-empty"><h3>Your basket is empty</h3><p>Select a variant and pack to begin.</p></div>';footer.innerHTML='';return}

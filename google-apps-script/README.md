@@ -20,7 +20,7 @@ The Apps Script is designed for the midlandsrx-data spreadsheet and these exact 
 
 ## Data flow
 
-- A basket request is written to orders before the customer is redirected to WhatsApp or Telegram.
+- Checkout attempts to save the basket request to orders, then redirects to WhatsApp or Telegram. A failed save, unavailable API, or five-second timeout still redirects; the basket remains stored locally on failure.
 - Duplicate order IDs are ignored.
 - New reviews are written to reviews-ratings with Pending status.
 - Only Approved reviews are returned publicly.

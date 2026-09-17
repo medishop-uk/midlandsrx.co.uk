@@ -1,6 +1,40 @@
+Options -Indexes -MultiViews
 RewriteEngine On
+AddDefaultCharset UTF-8
 
-# Legacy ampersand category slugs redirect to portable SEO-safe filenames.
-RewriteRule ^shop/category/adhd-(?:&|%26)-wakefulness(?:\.html)?$ shop/category/adhd-and-wakefulness.html [R=301,L,NE]
-RewriteRule ^shop/category/sleep-(?:&|%26)-insomnia-medication(?:\.html)?$ shop/category/sleep-and-insomnia-medication.html [R=301,L,NE]
-RewriteRule ^shop/category/nerve-pain-(?:&|%26)-anxiety-related-medicines(?:\.html)?$ shop/category/nerve-pain-and-anxiety-related-medicines.html [R=301,L,NE]
+# Keep development files and repository metadata off the public web.
+RewriteRule ^(?:\.git|tools|google-apps-script)(?:/|$) - [F,L]
+<FilesMatch "^(?:README\.md|medicine-price-list\.txt)$">
+    Require all denied
+</FilesMatch>
+
+# Legacy category names.
+RewriteCond %{REQUEST_URI} ^(.*/)shop/category/
+RewriteRule ^shop/category/adhd-(?:&|%26)-wakefulness(?:\.html)?$ %1shop/category/adhd-and-wakefulness [R=301,L,NE]
+RewriteCond %{REQUEST_URI} ^(.*/)shop/category/
+RewriteRule ^shop/category/sleep-(?:&|%26)-insomnia-medication(?:\.html)?$ %1shop/category/sleep-and-insomnia-medication [R=301,L,NE]
+RewriteCond %{REQUEST_URI} ^(.*/)shop/category/
+RewriteRule ^shop/category/nerve-pain-(?:&|%26)-anxiety-related-medicines(?:\.html)?$ %1shop/category/nerve-pain-and-anxiety-related-medicines [R=301,L,NE]
+
+# Redirect only browser requests, never the internal rewrite below.
+RewriteCond %{THE_REQUEST} \s/+([^?\ ]*/)?index\.html(?:[?\ ]|$) [NC]
+RewriteRule ^(?:.*/)?index\.html$ /%1 [R=301,L,NE]
+RewriteCond %{THE_REQUEST} \s/+([^?\ ]+)\.html(?:[?\ ]|$) [NC]
+RewriteRule ^.+\.html$ /%1 [R=301,L,NE]
+
+# A virtual page has no trailing slash; real directories retain theirs.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^(.+)/$
+RewriteRule ^.+/$ %1 [R=301,L,NE]
+
+# Serve existing HTML files at extensionless URLs.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
